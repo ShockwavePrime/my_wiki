@@ -1,0 +1,35 @@
+{% extends "encyclopedia/layout.html" %} {% block body %}
+<h1>Editing "{{ title }}"</h1>
+
+<form method="POST">
+  {% csrf_token %}
+  <div class="editor-preview-container">
+    <div class="editor">
+      {{ form.title }}
+      <label for="id_body">Markdown:</label><br />
+      {{ form.body }}
+    </div>
+    <div class="preview">
+      <label>Live Preview:</label>
+      <div id="markdown-preview" class="markdown-output"></div>
+    </div>
+  </div>
+
+  <input type="submit" value="Save Changes" />
+</form>
+{% endblock %} {% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+  const textarea = document.querySelector("textarea[name='body']");
+  const preview = document.getElementById("markdown-preview");
+
+  function updatePreview() {
+    const rawMarkdown = textarea.value;
+    const html = marked.parse(rawMarkdown);
+    preview.innerHTML = html;
+  }
+
+  textarea.addEventListener("input", updatePreview);
+  window.addEventListener("load", updatePreview);
+</script>
+{% endblock %}
